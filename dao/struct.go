@@ -33,13 +33,8 @@ func S(val interface{}) *Struct {
 	return v
 }
 
-// ScanRow ...
-func (s *Struct) ScanRow(row *sql.Row, destPtr interface{}) error {
-	return s.ScanRowForTag(row, "", destPtr)
-}
-
-// ScanRowForTag ...
-func (s *Struct) ScanRowForTag(row *sql.Row, tag string, destPtr interface{}) error {
+// scanRow ...
+func (s *Struct) scanRow(row *sql.Row, tag string, destPtr interface{}) error {
 	dTyp := reflect.TypeOf(destPtr)
 	if dTyp.Kind() != reflect.Ptr || dTyp.Elem() != s.typ {
 		return fmt.Errorf("invalid dest type: %v", dTyp)
@@ -51,13 +46,8 @@ func (s *Struct) ScanRowForTag(row *sql.Row, tag string, destPtr interface{}) er
 	return nil
 }
 
-// ScanRows ...
-func (s *Struct) ScanRows(rows *sql.Rows, destPtr interface{}) error {
-	return s.ScanRowsForTag(rows, "", destPtr)
-}
-
-// ScanRowsForTag ...
-func (s *Struct) ScanRowsForTag(rows *sql.Rows, tag string, destPtr interface{}) error {
+// scanRows ...
+func (s *Struct) scanRows(rows *sql.Rows, tag string, destPtr interface{}) error {
 	dTyp := reflect.TypeOf(destPtr)
 	if dTyp.Kind() != reflect.Ptr || dTyp.Elem().Kind() != reflect.Slice || dTyp.Elem().Elem() != s.typ {
 		return fmt.Errorf("invalid dest type: %v", dTyp)
@@ -101,7 +91,11 @@ func (s *Struct) TagQuery(
 	}
 	defer rows.Close()
 
-	return s.ScanRowsForTag(rows, tag, result)
+	if err = s.scanRows(rows, tag, result); err != nil {
+		// ecmlog.ErrorEx(ctx, "scanRows failed", "expr", expr, "args", args)
+		return err
+	}
+	return nil
 }
 
 // TagQueryB ...
@@ -129,7 +123,11 @@ func (s *Struct) QueryRowB(ctx context.Context, db Executor, result interface{},
 func (s *Struct) TagQueryRow(
 	ctx context.Context, db Executor, result interface{}, tag, expr string, args ...interface{},
 ) error {
-	return s.ScanRowForTag(QueryRow(ctx, db, expr, args...), tag, result)
+	err := s.scanRow(QueryRow(ctx, db, expr, args...), tag, result)
+	if err != nil {
+		// ecmlog.ErrorEx(ctx, "scanRow failed", "expr", expr, "args", args)
+	}
+	return err
 }
 
 // TagQueryRowB ...

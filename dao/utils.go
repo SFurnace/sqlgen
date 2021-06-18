@@ -111,6 +111,7 @@ func getValue(ctx context.Context, db Executor, b sqlbuilder.Builder, vt reflect
 
 	tmp := reflect.New(vt)
 	if err := row.Scan(tmp.Interface()); err != nil {
+		// ecmlog.ErrorEx(ctx, "Scan failed", "expr", expr, "args", args)
 		return nil, err
 	}
 	return tmp.Elem().Interface(), nil
@@ -174,6 +175,7 @@ func pullValues(ctx context.Context, db Executor, b sqlbuilder.Builder, vt refle
 	tmp, result := reflect.New(vt), reflect.MakeSlice(reflect.SliceOf(vt), 0, 0)
 	for rows.Next() {
 		if err = rows.Scan(tmp.Interface()); err != nil {
+			// ecmlog.ErrorEx(ctx, "Scan failed", "expr", expr, "args", args)
 			return nil, err
 		}
 		result = reflect.Append(result, tmp.Elem())
