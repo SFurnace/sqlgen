@@ -85,6 +85,12 @@ func (s *Struct) Query(ctx context.Context, db Executor, result interface{}, exp
 	return s.TagQuery(ctx, db, result, "", expr, args...)
 }
 
+// QueryB ...
+func (s *Struct) QueryB(ctx context.Context, db Executor, result interface{}, b *sqlbuilder.SelectBuilder) error {
+	expr, args := b.Build()
+	return s.TagQuery(ctx, db, result, "", expr, args...)
+}
+
 // TagQuery ...
 func (s *Struct) TagQuery(
 	ctx context.Context, db Executor, result interface{}, tag, expr string, args ...interface{},
@@ -98,10 +104,24 @@ func (s *Struct) TagQuery(
 	return s.ScanRowsForTag(rows, tag, result)
 }
 
+// TagQueryB ...
+func (s *Struct) TagQueryB(
+	ctx context.Context, db Executor, result interface{}, tag string, b *sqlbuilder.SelectBuilder,
+) error {
+	expr, args := b.Build()
+	return s.TagQuery(ctx, db, result, tag, expr, args...)
+}
+
 // QueryRow ...
 func (s *Struct) QueryRow(
 	ctx context.Context, db Executor, result interface{}, expr string, args ...interface{},
 ) error {
+	return s.TagQueryRow(ctx, db, result, "", expr, args...)
+}
+
+// QueryRowB ...
+func (s *Struct) QueryRowB(ctx context.Context, db Executor, result interface{}, b *sqlbuilder.SelectBuilder) error {
+	expr, args := b.Build()
 	return s.TagQueryRow(ctx, db, result, "", expr, args...)
 }
 
@@ -112,37 +132,17 @@ func (s *Struct) TagQueryRow(
 	return s.ScanRowForTag(QueryRow(ctx, db, expr, args...), tag, result)
 }
 
-// Exec ...
-func (s *Struct) Exec(ctx context.Context, db Executor, expr string, args ...interface{}) (sql.Result, error) {
-	return Exec(ctx, db, expr, args...)
-}
-
-// QueryB ...
-func (s *Struct) QueryB(ctx context.Context, db Executor, result interface{}, b *sqlbuilder.SelectBuilder) error {
-	expr, args := b.Build()
-	return s.TagQuery(ctx, db, result, "", expr, args...)
-}
-
-// TagQueryB ...
-func (s *Struct) TagQueryB(
-	ctx context.Context, db Executor, result interface{}, tag string, b *sqlbuilder.SelectBuilder,
-) error {
-	expr, args := b.Build()
-	return s.TagQuery(ctx, db, result, tag, expr, args...)
-}
-
-// QueryRowB ...
-func (s *Struct) QueryRowB(ctx context.Context, db Executor, result interface{}, b *sqlbuilder.SelectBuilder) error {
-	expr, args := b.Build()
-	return s.TagQueryRow(ctx, db, result, "", expr, args...)
-}
-
 // TagQueryRowB ...
 func (s *Struct) TagQueryRowB(
 	ctx context.Context, db Executor, result interface{}, tag string, b *sqlbuilder.SelectBuilder,
 ) error {
 	expr, args := b.Build()
 	return s.TagQueryRow(ctx, db, result, tag, expr, args...)
+}
+
+// Exec ...
+func (s *Struct) Exec(ctx context.Context, db Executor, expr string, args ...interface{}) (sql.Result, error) {
+	return Exec(ctx, db, expr, args...)
 }
 
 // ExecB ...

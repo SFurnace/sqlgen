@@ -57,6 +57,12 @@ func Query(ctx context.Context, db Executor, expr string, args ...interface{}) (
 	return rows, nil
 }
 
+// QueryB 执行查询
+func QueryB(ctx context.Context, db Executor, b *sqlbuilder.SelectBuilder) (*sql.Rows, error) {
+	expr, args := b.Build()
+	return Query(ctx, db, expr, args...)
+}
+
 // QueryRow 执行查询
 func QueryRow(ctx context.Context, db Executor, expr string, args ...interface{}) *sql.Row {
 	// start := time.Now()
@@ -68,6 +74,12 @@ func QueryRow(ctx context.Context, db Executor, expr string, args ...interface{}
 		// ecmlog.ErrorEx(ctx, "QueryRowContext failed", "err", err, "expr", expr, "args", args)
 	}
 	return row
+}
+
+// QueryRowB 执行查询
+func QueryRowB(ctx context.Context, db Executor, b *sqlbuilder.SelectBuilder) *sql.Row {
+	expr, args := b.Build()
+	return QueryRow(ctx, db, expr, args...)
 }
 
 // Exec 执行 SQL
@@ -82,18 +94,6 @@ func Exec(ctx context.Context, db Executor, expr string, args ...interface{}) (s
 		// ecmlog.InfoEx(ctx, "ExecContext ok", "expr", expr, "args", args)
 	}
 	return result, err
-}
-
-// QueryB 执行查询
-func QueryB(ctx context.Context, db Executor, b *sqlbuilder.SelectBuilder) (*sql.Rows, error) {
-	expr, args := b.Build()
-	return Query(ctx, db, expr, args...)
-}
-
-// QueryRowB 执行查询
-func QueryRowB(ctx context.Context, db Executor, b *sqlbuilder.SelectBuilder) *sql.Row {
-	expr, args := b.Build()
-	return QueryRow(ctx, db, expr, args...)
 }
 
 // ExecB 执行 SQL
