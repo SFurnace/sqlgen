@@ -92,7 +92,7 @@ func (s *Struct) TagQuery(
 	defer rows.Close()
 
 	if err = s.scanRows(rows, tag, result); err != nil {
-		// ecmlog.ErrorEx(ctx, "scanRows failed", "expr", expr, "args", args)
+		// ecmlog.ErrorEx(ctx, "scanRows failed", "err", err, "expr", expr, "args", args)
 		return err
 	}
 	return nil
@@ -125,7 +125,7 @@ func (s *Struct) TagQueryRow(
 ) error {
 	err := s.scanRow(QueryRow(ctx, db, expr, args...), tag, result)
 	if err != nil {
-		// ecmlog.ErrorEx(ctx, "scanRow failed", "expr", expr, "args", args)
+		// ecmlog.ErrorEx(ctx, "scanRow failed", "err", err, "expr", expr, "args", args)
 	}
 	return err
 }
