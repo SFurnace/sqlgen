@@ -261,7 +261,7 @@ func GetCount(ctx context.Context, db Executor, b sqlbuilder.Builder) (int64, er
 		return 0, errors.New("not an select builder")
 	} else {
 		shadow := *v
-		shadow.Select("COUNT(*)").Limit(0).Offset(0)
+		shadow.Select("COUNT(*)").Limit(-1).Offset(-1)
 		return GetInt64(ctx, db, &shadow)
 	}
 }
