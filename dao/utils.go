@@ -16,6 +16,9 @@ const (
 	Replace      = "Replace"
 )
 
+// EmptyCond 空过滤条件
+var EmptyCond = CondFunc(func(Cond) {})
+
 /* Type Definition */
 
 // Executor is an *sql.DB or *sql.Tx or even *sql.Conn
